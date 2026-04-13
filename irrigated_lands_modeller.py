@@ -1,4 +1,8 @@
 """"
+updated: 4.13.25
+author: sschmitz@uidaho.edu
+
+
 irrigated_lands_modeller.py takes two ArcGIS .shp files that are training sets to identify 'corner' polygons and partial circular polygons that have been missed by the circle 
 classifier. In this context, 'corners' are polygon artifacts that are not going to be considered in the model that pop up around circular pivot irrigated land. Each training set
 containts approximately 500 samples: 250 positive exmaples, 250 negative examples. 
