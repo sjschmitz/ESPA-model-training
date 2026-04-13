@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import geopandas as gpd
 import pandas as pd
@@ -12,9 +6,6 @@ from rasterio import features
 from rasterio.windows import from_bounds
 from shapely.geometry import Point, Polygon
 from shapely.ops import unary_union
-
-
-# In[2]:
 
 
 in_shp = r"Z:\Modeling\ESPA_Soil_Water_Balance\Shapefiles\2008_Irrigated_Lands_for_the_Eastern_Snake_Plain_Aquifer\2008_Irrigated_Lands_for_the_Eastern_Snake_Plain_Aquifer.shp"
@@ -67,8 +58,6 @@ sector_min_bin_run = 18
 circle_resolution = 128
 sector_resolution = 180
 
-
-# In[3]:
 
 
 def explode_multiparts(gdf):
@@ -568,10 +557,6 @@ def remove_small_pivot_adjacent_slivers(non_circular, pivot_gdf, area_max=12000.
 
     return gpd.GeoDataFrame(keep_rows, geometry="geometry", crs=non_circular.crs).reset_index(drop=True)
 
-
-# In[4]:
-
-
 gdf = gpd.read_file(in_shp)
 
 if gdf.empty:
@@ -637,8 +622,6 @@ print(f"Total cleaned input polygons: {len(gdf)}")
 print(f"Smoothed candidate polygons: {int(candidate_mask.sum())}")
 
 
-# In[5]:
-
 
 circular = gdf[
     (gdf["circ"] >= circularity_thresh) &
@@ -660,8 +643,6 @@ print(f"Initial circular candidates: {len(circular)}")
 print(f"Circular after dedupe: {len(circular_clean)}")
 print(f"Circular duplicate drops: {len(circular_drop_ids)}")
 
-
-# In[6]:
 
 
 pacman = gdf[
@@ -692,8 +673,6 @@ pacman, pacman_body_keep_ids, pacman_body_drop_ids = (
 print(f"Filtered pacman candidate count (post-dedupe): {len(pacman)}")
 print(f"Pacman body duplicate drops: {len(pacman_body_drop_ids)}")
 
-
-# In[ ]:
 
 
 accepted_rows = []
@@ -825,9 +804,6 @@ print(f"Rejected fit candidates: {len(fit_rejects)}")
 print(f"Uncertain review candidates: {len(uncertain_review)}")
 
 
-# In[8]:
-
-
 auto_ids = set()
 if len(pivot_fullfit):
     auto_ids |= set(pivot_fullfit["src_id"].astype(int).tolist())
@@ -851,9 +827,6 @@ non_circular["fit_method"] = "original_geom"
 print(f"Non-circular output count: {len(non_circular)}")
 
 
-# In[ ]:
-
-
 circular_out = pd_concat_safe([circular_clean, pivot_fullfit], crs=gdf.crs)
 accepted_pivots = pd_concat_safe([circular_out, pivot_sector], crs=gdf.crs)
 
@@ -875,10 +848,6 @@ non_circular = remove_small_pivot_adjacent_slivers(
 )
 
 print(f"Non-circular after halo/corner cleanup: {len(non_circular)}")
-
-
-
-# In[ ]:
 
 
 def strip_extra_geometry_cols(gdf):
@@ -915,9 +884,6 @@ if len(fit_rejects_export) > 0:
 
 if len(uncertain_review_export) > 0:
     uncertain_review_export.to_file(out_uncertain_shp)
-
-
-# In[ ]:
 
 
 
